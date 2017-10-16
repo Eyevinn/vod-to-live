@@ -32,11 +32,11 @@ class HLSVod:
                 key = str(playlist.stream_info.bandwidth)
                 if not key in self.segments:
                     self.segments[key] = []
-                    self.segments[key].append(segment)
-                    #print "KEYS: "
-                    #print self.segments.keys()
-                    #print "Length: "
-                    #print len(self.segments)
+                self.segments[key].append(segment)
+                #print "KEYS: "
+                #print self.segments.keys()
+                #print "Length: "
+                #print len(self.segments)
 
         self.index = 0
 
