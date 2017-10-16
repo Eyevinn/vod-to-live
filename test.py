@@ -4,16 +4,18 @@ import threading
 def main():
     
     vod = HLSVod('http://dw2nch8cl472k.cloudfront.net/HLS/Apple%20HLS/HTTP%20example.m3u8')
-        #vod.dump()
-        #print "LIST PLAYLISTS"
-        #vod.list_playlists()
-        #print('HLS START')
+    #vod = HLSVod('http://184.72.239.149/vod/smil:BigBuckBunny.smil/playlist.m3u8')
+    #vod.dump()
+    #print "LIST PLAYLISTS"
+    #vod.list_playlists()
+    #print('HLS START')
+    
+    #text_file = open("text_file.txt", "w")
         
-        #text_file = open("text_file.txt", "w")
-        
-    playIsActive = True
+    #playIsActive = True
     vod.write_to_textfile()
-    print vod.get_segment('18830456')
+    print("GET SEGMENTS: ")
+    print vod.get_segment('808400')
     vod.next()
         
     '''def timerFunction():
@@ -45,5 +47,5 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-        except Exception, err:
+    except Exception, err:
         raise
