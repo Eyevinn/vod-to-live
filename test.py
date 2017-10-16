@@ -13,7 +13,7 @@ def main():
     #text_file = open("text_file.txt", "w")
         
     #playIsActive = True
-    vod.write_to_textfile()
+    vod.write_to_textfile("test/")
     print("GET SEGMENTS: ")
     print vod.get_segment('808400')
     vod.next()
