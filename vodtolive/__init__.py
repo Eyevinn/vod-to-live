@@ -65,17 +65,20 @@ class HLSVod:
     def dump(self):
         print self.segments
     
-    def write_to_textfile(self, path):
+    def write_to_textfile(self):
         #Create master playlist textfile
         
         #For each Media playlist, create media playlist files
         counter = 0
         for playlist in self.m3u8_obj.playlists:
-            newFileName = path + 'playlistfile-'+str(counter)+'.m3u8'
+            newFileName = 'playlistfile-'+str(counter)+'.m3u8'
             outfile = open(newFileName,'w')
             pth = self.m3u8_obj.base_uri + playlist.uri
             m3u8_playlist = m3u8.load(pth)
             for segment in m3u8_playlist.segments:
+                #print("SAHAR SER ETT SEGMENT UT: ")
+                #print(segment)
                 outfile.write(str(segment))
+                outfile.write("\n")
             outfile.close()
             counter+=1
