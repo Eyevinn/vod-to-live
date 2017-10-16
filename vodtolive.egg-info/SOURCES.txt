@@ -1,7 +1,0 @@
-setup.py
-vodtolive/__init__.py
-vodtolive.egg-info/PKG-INFO
-vodtolive.egg-info/SOURCES.txt
-vodtolive.egg-info/dependency_links.txt
-vodtolive.egg-info/requires.txt
-vodtolive.egg-info/top_level.txt
