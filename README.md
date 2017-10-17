@@ -1,7 +1,7 @@
-Install:
+Install:<br />
 python setup.py install
 
-Use:
+Use:<br />
 from vodtolive import HLSVod
 def main():
    vod = HLSVod('url')
