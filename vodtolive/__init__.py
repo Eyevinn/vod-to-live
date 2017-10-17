@@ -83,20 +83,43 @@ class HLSVod:
             x.write("#EXT-X-STREAM-INF:")
             x.write("AVERAGE-BANDWIDTH=" + str(playlist.stream_info.average_bandwidth) +",") 
             x.write("BANDWIDTH=" + str(playlist.stream_info.bandwidth) +",")
-            x.write("CODECS=" + format(playlist.stream_info.codecs) +",") 
-            x.write("RESOLUTION=" + format(playlist.stream_info.resolution))
+            print("CODEC TYPE")
+            print(type(playlist.stream_info.codecs))
+            print(playlist.stream_info.codecs)
+            print("RESOLUTION")
+            print(type(playlist.stream_info.resolution))
+            print(playlist.stream_info.resolution)
+            x.write("CODECS=" + '"' + playlist.stream_info.codecs + '"')
+            if playlist.stream_info.resolution != None:
+                x.write(",")
+                x.write("RESOLUTION=")
+                for res in playlist.stream_info.resolution:
+                    x.write(str(res))
+                    if res != playlist.stream_info.resolution[-1]:
+                        x.write("x")
             x.write("\n")
-            x.write(self.m3u8_obj.base_uri + playlist.uri)
-            x.write("\n")
+            #x.write(self.m3u8_obj.base_uri + playlist.uri)
+            #x.write("\n")
 
+            #EXT tags
+            ext_x_media_sequence = 0
+            ext_x_target_duration = 4
+            ext_x_version = 3
+            ext_x_playlist_type = "EVENT"
 
             #For each Media playlist, create media playlist files 
             newFileName = 'playlistfile-'+str(counter)+'.m3u8'
-            outfile = open(newFileName,'w')
+            y = open(newFileName,'w')
             pth = self.m3u8_obj.base_uri + playlist.uri
+            #x.write(self.m3u8_obj.base_uri)
+            x.write(newFileName)
+            x.write("\n")
             m3u8_playlist = m3u8.load(pth)
-            outfile.write("#EXTM3U")
-            outfile.write("\n")
+            y.write("#EXTM3U" + "\n")
+            y.write("#EXT-X-VERSION:" + str(ext_x_version) + "\n")
+            y.write("#EXT-X-TARGETDURATION:" + str(ext_x_target_duration) + "\n")
+            y.write("#EXT-X-MEDIA-SEQUENCE:" + str(ext_x_media_sequence) + "\n")
+            y.write("#EXT-X-PLAYLIST-TYPE:" + ext_x_playlist_type + "\n")
             for segment in m3u8_playlist.segments:
                 #print ("KEY: ")
                 #print segment.base_uri
@@ -104,15 +127,18 @@ class HLSVod:
                 #print segment.duration
                 #print type(segment)
                 #print(segment)
-                #outfile.write(pth)
+                #y.write(pth)
                 #segmentString = str(segment)
-                outfile.write("#EXTINF:")
-                outfile.write(str(segment.duration) +",")
-                outfile.write("\n")
-                outfile.write(segment.base_uri + segment.uri)
-                #outfile.write(format(segment))
-                outfile.write("\n")
-            outfile.write("#EXT-X-ENDLIST")
-            outfile.close()
+                y.write("#EXTINF:")
+                y.write(str(segment.duration) +",")
+                y.write("\n")
+                y.write(segment.base_uri + segment.uri)
+                #y.write(format(segment))
+                y.write("\n")
+
+            if ext_x_playlist_type != "EVENT":
+                y.write("#EXT-X-ENDLIST")
+                
+            y.close()
             counter+=1
         x.close()
