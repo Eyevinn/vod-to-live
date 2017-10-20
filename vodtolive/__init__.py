@@ -1,26 +1,25 @@
 import m3u8
 
-
 class HLSVod:
     def __init__(self, hlsManifestUri):
         self.hlsManifestUri = hlsManifestUri
         self.m3u8_obj = m3u8.load(self.hlsManifestUri)
         self.segments = {}
 
-        print "Is master playlist?"
-        print self.m3u8_obj.is_variant
-        print("\n")
+        #print "Is master playlist?"
+        #print self.m3u8_obj.is_variant
+        #print("\n")
 
         #print "HLSVOD Object:"
         #print self.m3u8_obj
 
-        print "Target duration:"
-        print self.m3u8_obj.target_duration
-        print("\n")
+        #print "Target duration:"
+        #print self.m3u8_obj.target_duration
+        #print("\n")
 
-        print "BASE URI:"
-        print self.m3u8_obj.base_uri
-        print("\n")
+        #print "BASE URI:"
+        #print self.m3u8_obj.base_uri
+        #print("\n")
 
         for playlist in self.m3u8_obj.playlists:
             pth = self.m3u8_obj.base_uri + playlist.uri
@@ -69,7 +68,48 @@ class HLSVod:
 
     def dump(self):
         print self.segments
+
+    def get_live_master_manifest(self):
+        master_manifest_string = ""
+        master_manifest_string += "#EXTM3U" + "\n"
+        counter = 0
+
+        for playlist in self.m3u8_obj.playlists:
+            master_manifest_string += "#EXT-X-STREAM-INF:" + "AVERAGE-BANDWIDTH=" + str(playlist.stream_info.average_bandwidth) + "," + "BANDWIDTH=" + str(playlist.stream_info.bandwidth) + "," + "CODECS=" + '"' + playlist.stream_info.codecs + '"'
+            newFileName = str(playlist.stream_info.bandwidth)
+            if playlist.stream_info.resolution != None:
+                master_manifest_string += ",RESOLUTION="
+                resolution = ""
+                for res in playlist.stream_info.resolution:
+                    resolution += str(res)
+                    master_manifest_string += str(res)
+                    if res != playlist.stream_info.resolution[-1]:
+                        master_manifest_string += "x"
+                        resolution += "x"
+                    #newFileName = resolution +'.m3u8'
+            else:
+                newFileName = "audio"
+            #newFileName = str(playlist.stream_info.bandwidth) +str(counter)+'.m3u8'
+            master_manifest_string += "\n" + newFileName + ".m3u8" + "\n"
+            counter += 1
+
+        #print ("Return manifest as a single string!")
+        return master_manifest_string
+
+    def get_live_media_manifest(self, bitrate):
+        media_manifest_string = ""
+        media_manifest_string += "#EXTM3U" + "\n"
+        media_manifest_string += "#EXT-X-VERSION:3" + "\n"
+        media_manifest_string += "#EXT-X-TARGETDURATION:4" + "\n"
+        media_manifest_string += "#EXT-X-MEDIA-SEQUENCE:0" + "\n"
+        media_manifest_string += "#EXT-X-PLAYLIST-TYPE:EVENT" + "\n"
+
+        for segment in self.segments[bitrate]:
+            media_manifest_string += "#EXTINF:" + str(segment.duration)  + "\n" + segment.base_uri + segment.uri + "\n"
+            
+        return media_manifest_string
     
+    '''
     def write_to_textfile(self):
         newMasterPlaylistFile = 'masterplaylistfile.m3u8'
         x = open(newMasterPlaylistFile,'w')
@@ -83,12 +123,12 @@ class HLSVod:
             x.write("#EXT-X-STREAM-INF:")
             x.write("AVERAGE-BANDWIDTH=" + str(playlist.stream_info.average_bandwidth) +",") 
             x.write("BANDWIDTH=" + str(playlist.stream_info.bandwidth) +",")
-            print("CODEC TYPE")
-            print(type(playlist.stream_info.codecs))
-            print(playlist.stream_info.codecs)
-            print("RESOLUTION")
-            print(type(playlist.stream_info.resolution))
-            print(playlist.stream_info.resolution)
+            #print("CODEC TYPE")
+            #print(type(playlist.stream_info.codecs))
+            #print(playlist.stream_info.codecs)
+            #print("RESOLUTION")
+            #print(type(playlist.stream_info.resolution))
+            #print(playlist.stream_info.resolution)
             x.write("CODECS=" + '"' + playlist.stream_info.codecs + '"')
             if playlist.stream_info.resolution != None:
                 x.write(",")
@@ -138,7 +178,8 @@ class HLSVod:
 
             if ext_x_playlist_type != "EVENT":
                 y.write("#EXT-X-ENDLIST")
-                
+
             y.close()
             counter+=1
         x.close()
+    '''
